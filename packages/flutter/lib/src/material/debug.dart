@@ -23,10 +23,9 @@ bool debugCheckHasMaterial(BuildContext context) {
   assert(() {
     if (context.widget is! Material && context.ancestorWidgetOfExactType(Material) == null) {
       final StringBuffer message = new StringBuffer();
-      message.writeln('No Material widget found.');
       message.writeln(
-        '${context.widget.runtimeType} widgets require a Material '
-        'widget ancestor.'
+        '\u001B[31mMaterial widget ancestor required by ${context.widget.runtimeType} widgets '
+        'not found.\u001B[0m\n'
       );
       message.writeln(
         'In material design, most widgets are conceptually "printed" on '
@@ -39,12 +38,12 @@ bool debugCheckHasMaterial(BuildContext context) {
       message.writeln(
         'To introduce a Material widget, you can either directly '
         'include one, or use a widget that contains Material itself, '
-        'such as a Card, Dialog, Drawer, or Scaffold.'
+        'such as a Card, Dialog, Drawer, or Scaffold.\n'
       );
-      message.writeln(
-        'The specific widget that could not find a Material ancestor was:'
-      );
-      message.writeln('  ${context.widget}');
+      // message.writeln(
+      //   'The specific widget that could not find a Material ancestor was:'
+      // );
+      // message.writeln('  ${context.widget}');
       final List<Widget> ancestors = <Widget>[];
       context.visitAncestorElements((Element element) {
         ancestors.add(element.widget);
@@ -52,8 +51,11 @@ bool debugCheckHasMaterial(BuildContext context) {
       });
       if (ancestors.isNotEmpty) {
         message.write('The ancestors of this widget were:');
-        for (Widget ancestor in ancestors)
+        for (Widget ancestor in ancestors) {
           message.write('\n  $ancestor');
+          break;
+        }
+        message.write('\n  ...');
       } else {
         message.writeln(
           'This widget is the root of the tree, so it has no '
