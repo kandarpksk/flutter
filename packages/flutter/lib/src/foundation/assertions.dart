@@ -263,7 +263,7 @@ class FlutterError extends AssertionError {
       return;
     if (_errorCount == 0 || forceReport) {
       final String header = '\u2550\u2550\u2561 EXCEPTION CAUGHT BY ${details.library} \u255E'.toUpperCase();
-      final String footer = '\u2550' * wrapWidth;
+      final String footer = '\u2550' * wrapWidth + '\n';
       debugPrint('$header${"\u2550" * (footer.length - header.length)}');
       final String verb = 'thrown${ details.context != null ? " ${details.context}" : ""}';
       if (details.exception is NullThrownError) {
@@ -289,6 +289,7 @@ class FlutterError extends AssertionError {
         if (message.startsWith(prefix))
           message = message.substring(prefix.length);
         debugPrint('The following $errorName was $verb:\n$message', wrapWidth: wrapWidth);
+        // TODO(kkhandwala): add a note about how "distributed" (scattered and complex, but systematic) this is!
       }
       Iterable<String> stackLines = (details.stack != null) ? details.stack.toString().trimRight().split('\n') : null;
       if ((details.exception is AssertionError) && (details.exception is! FlutterError)) {
@@ -324,8 +325,14 @@ class FlutterError extends AssertionError {
         } else {
           stackLines = defaultStackFilter(stackLines);
         }
-        for (String line in stackLines)
+        int lineCount = 0;
+        for (String line in stackLines) {
           debugPrint(line, wrapWidth: wrapWidth);
+          lineCount++;
+          if (lineCount == 10)
+            break;
+        }
+        debugPrint("...");
       }
       if (details.informationCollector != null) {
         final StringBuffer information = new StringBuffer();
@@ -334,7 +341,9 @@ class FlutterError extends AssertionError {
       }
       debugPrint(footer);
     } else {
-      debugPrint('Another exception was thrown: ${details.exceptionAsString().split("\n")[0].trimLeft()}');
+      const String brightWhite = '\u001b[37;1m';
+      const String resetColor = '\u001b[0m';
+      debugPrint(brightWhite + 'Another exception was thrown: ${details.exceptionAsString().split("\n")[0].trimLeft()}' + resetColor);
     }
     _errorCount += 1;
   }

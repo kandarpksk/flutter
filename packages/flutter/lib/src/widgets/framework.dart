@@ -3642,7 +3642,9 @@ abstract class ComponentElement extends Element {
       built = build();
       debugWidgetBuilderValue(widget, built);
     } catch (e, stack) {
-      built = ErrorWidget.builder(_debugReportException('building $this', e, stack));
+      const String brightBlue = '\u001b[34;1m'; // see what is used in the default IDE color scheme
+      const String resetColor = '\u001b[0m';
+      built = ErrorWidget.builder(_debugReportException('building ' + brightBlue + '$this' + resetColor, e, stack));
     } finally {
       // We delay marking the element as clean until after calling build() so
       // that attempts to markNeedsBuild() during build() will be ignored.
