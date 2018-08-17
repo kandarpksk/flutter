@@ -238,6 +238,14 @@ class FlutterError extends AssertionError {
   /// they will wrap, e.g. when placing ASCII art diagrams in messages.
   static const int wrapWidth = 100;
 
+  static String shorten(String context) {
+    const String brightBlue = '\u001b[34;1m'; // must be the same color as in framework.dart
+    const String resetColor = '\u001b[0m';
+    if (context.startsWith('building ' + brightBlue + 'TextField('))
+      return context.split('(')[0] + '(...)' + resetColor;
+    return context;
+  }
+
   /// Prints the given exception details to the console.
   ///
   /// The first time this is called, it dumps a very verbose message to the
@@ -265,7 +273,7 @@ class FlutterError extends AssertionError {
       final String header = '\u2550\u2550\u2561 EXCEPTION CAUGHT BY ${details.library} \u255E'.toUpperCase();
       final String footer = '\u2550' * wrapWidth + '\n';
       debugPrint('$header${"\u2550" * (footer.length - header.length)}');
-      final String verb = 'thrown${ details.context != null ? " ${details.context}" : ""}';
+      final String verb = 'thrown${ details.context != null ? " ${shorten(details.context)}" : ""}';
       if (details.exception is NullThrownError) {
         debugPrint('The null value was $verb.', wrapWidth: wrapWidth);
       } else if (details.exception is num) {
@@ -332,7 +340,7 @@ class FlutterError extends AssertionError {
           if (lineCount == 10)
             break;
         }
-        debugPrint("...");
+        debugPrint('...');
       }
       if (details.informationCollector != null) {
         final StringBuffer information = new StringBuffer();

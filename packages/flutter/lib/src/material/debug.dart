@@ -26,7 +26,7 @@ bool debugCheckHasMaterial(BuildContext context) {
       const String brightRed = '\u001b[31;1m';
       const String resetColor = '\u001b[0m';
       message.writeln(
-        brightRed + 'Material widget ancestor required by ${context.widget.runtimeType} widgets '
+        brightRed + 'Material widget ancestor (required by ${context.widget.runtimeType} widgets) '
         'not found.' + resetColor + '\n'
       );
       message.writeln(
@@ -39,7 +39,9 @@ bool debugCheckHasMaterial(BuildContext context) {
         'there be a Material widget in the tree above them.'
       );
       message.writeln(
-        '\nSuggestion'
+        '\nSuggested Fix'
+        // Kandarp: we could provide an "error signature" that could be
+        // looked up if users want more information
         '\nTo introduce a Material widget, you can either directly '
         'include one, or use a widget that contains Material itself, '
         'such as a Card, Dialog, Drawer, or Scaffold.\n'
@@ -57,11 +59,16 @@ bool debugCheckHasMaterial(BuildContext context) {
       });
       if (ancestors.isNotEmpty) {
         message.write('The ancestors of this widget were:');
+        int lineCount = 0;
         for (Widget ancestor in ancestors) {
           message.write('\n  $ancestor');
-          break;
+          lineCount++;
+          if (lineCount == 5)
+            break;
         }
-        message.write('\n  ...\n\n// maybe make a note that the stack trace is shown by default and may not be relevant here');
+        // Kandarp: for the terminal, there could be a verbose mode for errors
+        message.write('\n  ...');
+        // Kandarp: the stack trace is shown by default and may not be relevant here
       } else {
         message.writeln(
           'This widget is the root of the tree, so it has no '
