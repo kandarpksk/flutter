@@ -6,7 +6,8 @@ import 'dart:async';
 import 'dart:collection';
 
 /// Signature for [debugPrint] implementations.
-typedef void DebugPrintCallback(String message, { int wrapWidth });
+typedef void DebugPrintCallback(String message, { int wrapWidth, String wrapIndent });
+// added wrapIndent parameter might cause flutter_test and others to be incompatible
 
 /// Prints a message to the console, which you can access using the "flutter"
 /// tool's "logs" command ("flutter logs").
@@ -40,9 +41,9 @@ void debugPrintSynchronously(String message, { int wrapWidth }) {
 
 /// Implementation of [debugPrint] that throttles messages. This avoids dropping
 /// messages on platforms that rate-limit their logging (for example, Android).
-void debugPrintThrottled(String message, { int wrapWidth }) {
+void debugPrintThrottled(String message, { int wrapWidth, String wrapIndent: '' }) {
   if (wrapWidth != null) {
-    _debugPrintBuffer.addAll(message.split('\n').expand((String line) => debugWordWrap(line, wrapWidth)));
+    _debugPrintBuffer.addAll(message.split('\n').expand((String line) => debugWordWrap(line, wrapWidth, wrapIndent: wrapIndent)));
   } else {
     _debugPrintBuffer.addAll(message.split('\n'));
   }

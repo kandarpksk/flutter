@@ -296,7 +296,7 @@ class FlutterError extends AssertionError {
         String message = details.exceptionAsString();
         if (message.startsWith(prefix))
           message = message.substring(prefix.length);
-        debugPrint('The following $errorName was $verb:\n$message', wrapWidth: wrapWidth);
+        debugPrint('\nThe following $errorName was $verb:\n$message', wrapWidth: wrapWidth, wrapIndent: '  ');
         // TODO(kkhandwala): add a note about how "distributed" (scattered and complex, but systematic) this is!
       }
       Iterable<String> stackLines = (details.stack != null) ? details.stack.toString().trimRight().split('\n') : null;
@@ -334,8 +334,10 @@ class FlutterError extends AssertionError {
           stackLines = defaultStackFilter(stackLines);
         }
         int lineCount = 0;
+        const String brightWhite = '\u001b[38;5;251m';
+        const String resetColor = '\u001b[0m';
         for (String line in stackLines) {
-          debugPrint(line, wrapWidth: wrapWidth);
+          debugPrint(brightWhite + line + resetColor, wrapWidth: wrapWidth);
           lineCount++;
           if (lineCount == 10)
             break;
@@ -349,9 +351,9 @@ class FlutterError extends AssertionError {
       }
       debugPrint(footer);
     } else {
-      const String brightWhite = '\u001b[37;1m';
+      const String reversed = '\u001b[7m';
       const String resetColor = '\u001b[0m';
-      debugPrint(brightWhite + 'Another exception was thrown: ${details.exceptionAsString().split("\n")[0].trimLeft()}' + resetColor);
+      debugPrint(reversed + 'Another exception was thrown: ${details.exceptionAsString().split("\n")[0].trimLeft()}' + resetColor);
     }
     _errorCount += 1;
   }

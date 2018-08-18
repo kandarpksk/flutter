@@ -26,9 +26,9 @@ bool debugCheckHasMaterial(BuildContext context) {
       const String brightRed = '\u001b[31;1m';
       const String resetColor = '\u001b[0m';
       message.writeln(
-        brightRed + 'Material widget ancestor (required by ${context.widget.runtimeType} widgets) '
-        'not found.' + resetColor + '\n'
-      );
+        brightRed + '${context.widget.runtimeType} widgets require '
+        'a Material widget ancestor, but we couldn\'t find any.' + resetColor + '\n'
+      ); // Kandarp: "who" is speaking to the user?
       message.writeln(
         'Explanation'
         '\nIn material design, most widgets are conceptually "printed" on '
