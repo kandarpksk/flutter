@@ -48,11 +48,11 @@ bool debugCheckHasMaterial(BuildContext context) {
         'such as a Card, Dialog, Drawer, or Scaffold.\n'
       );
 
-      // kkhandwala@: Highlighting the widget.
       const String brightBlue = '\u001b[34;1m'; // must be the same color as in framework.dart
       message.writeln(
         'The specific widget that could not find a Material ancestor was:'
       );
+      // kkhandwala@: Highlighting the widget.
       var parenIndex = '${context.widget}'.indexOf('(');
       message.write(
         '  ' + brightBlue + '${context.widget}'.split('(')[0] + resetColor
@@ -73,7 +73,7 @@ bool debugCheckHasMaterial(BuildContext context) {
         const String gray78 = '\u001b[38;5;251m';
         int lineCount = 0;
         for (Widget ancestor in ancestors) {
-          // kkhandwala@: we do not want to emphasize the parameters.
+          // kkhandwala@: Showing the parameters in gray.
           var parenthesisIndex = '$ancestor'.indexOf('(');
           message.write('\n  ' + '$ancestor'.split('(')[0]);
           if (parenthesisIndex != -1)

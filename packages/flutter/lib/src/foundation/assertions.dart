@@ -238,6 +238,8 @@ class FlutterError extends AssertionError {
   /// they will wrap, e.g. when placing ASCII art diagrams in messages.
   static const int wrapWidth = 100;
 
+  // kkhandwala@: Hiding the parameters.
+  // TODO: verbose mode to see the parameters.
   static String shorten(String context) {
     const String brightBlue = '\u001b[34;1m'; // must be the same color as in framework.dart
     const String resetColor = '\u001b[0m';
@@ -341,6 +343,9 @@ class FlutterError extends AssertionError {
         } else {
           stackLines = defaultStackFilter(stackLines);
         }
+
+        // kkhandwala@: Showing only a few lines of the stack trace.
+        // TODO: verbose mode to see the entire stack trace.
         const String gray78 = '\u001b[38;5;251m';
         const String resetColor = '\u001b[0m';
         int lineCount = 0;
