@@ -38,6 +38,7 @@ bool debugCheckHasMaterial(BuildContext context) {
         'Material widget that renders ink splashes, for instance. '
         'Because of this, many material library widgets require that '
         'there be a Material widget in the tree above them.'
+        // Kandarp: Filip's suggestions of adding links could apply here.
       );
       message.writeln(
         '\nSuggested Fix'

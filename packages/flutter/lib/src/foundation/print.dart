@@ -86,6 +86,11 @@ void _debugPrintTask() {
 /// [debugPrint], which is used to report errors to the console).
 Future<Null> get debugPrintDone => _debugPrintCompleter?.future ?? new Future<Null>.value();
 
+// The regular expression may need to be generalized further.
+final RegExp colorCodes = new RegExp(r'\u001b\[[0-9;]+?m');
+String clearColors(String s) {
+  return s.replaceAll(colorCodes, '');
+}
 final RegExp _indentPattern = new RegExp('^ *(?:[-+*] |[0-9]+[.):] )?');
 enum _WordWrapParseMode { inSpace, inWord, atBreak }
 /// Wraps the given string at the given width.
@@ -126,15 +131,25 @@ Iterable<String> debugWordWrap(String message, int width, { String wrapIndent: '
         lastWordStart = index;
         mode = _WordWrapParseMode.inWord;
         break;
+
       case _WordWrapParseMode.inWord: // looking for a good break point
         while ((index < message.length) && (message[index] != ' '))
           index += 1;
         mode = _WordWrapParseMode.atBreak;
         break;
+
       case _WordWrapParseMode.atBreak: // at start of break point
-        if ((index - startForLengthCalculations > width) || (index == message.length)) {
+        // kkhandwala@: adjustment to ignore color codes, which are invisible.
+        // This is not a comprehensive/tested fix. For example, it could wrap just
+        // before a color code starts (which we'd prefer to have been included).
+        var adjustment = 0;
+        var matches = colorCodes.allMatches(message.substring(start, index));
+        matches.forEach((Match m){
+          adjustment += m.group(0).length; // toggle this line to revert for comparison
+        });
+        if ((index - startForLengthCalculations - adjustment > width) || (index == message.length)) {
           // we are over the width line, so break
-          if ((index - startForLengthCalculations <= width) || (lastWordEnd == null)) {
+          if ((index - startForLengthCalculations - adjustment <= width) || (lastWordEnd == null)) {
             // we should use this point, before either it doesn't actually go over the end (last line), or it does, but there was no earlier break point
             lastWordEnd = index;
           }
