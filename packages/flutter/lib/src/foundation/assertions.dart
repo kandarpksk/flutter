@@ -296,8 +296,16 @@ class FlutterError extends AssertionError {
         String message = details.exceptionAsString();
         if (message.startsWith(prefix))
           message = message.substring(prefix.length);
-        debugPrint('\nThe following $errorName was $verb:\n$message', wrapWidth: wrapWidth, wrapIndent: '  ');
-        // TODO(kkhandwala): add a note about how "distributed" (scattered and complex, but systematic) this is!
+
+        // kkhandwala@: [message] is printed differently since we want only specific wrapped lines indented.
+        debugPrint('\nThe following $errorName was $verb:\n', wrapWidth: wrapWidth);
+        String wrapIndent = '';
+        for (String line in message.split('\n')) {
+          if (line.startsWith('The ancestors of this widget were:'))
+            // kkhandwala@: From this point, if a "line" in [message] is wrapped, it is indented.
+            wrapIndent = '  ';
+          debugPrint(line, wrapWidth: wrapWidth, wrapIndent: wrapIndent);
+        }
       }
       Iterable<String> stackLines = (details.stack != null) ? details.stack.toString().trimRight().split('\n') : null;
       if ((details.exception is AssertionError) && (details.exception is! FlutterError)) {
@@ -333,11 +341,11 @@ class FlutterError extends AssertionError {
         } else {
           stackLines = defaultStackFilter(stackLines);
         }
-        int lineCount = 0;
-        const String brightWhite = '\u001b[38;5;251m';
+        const String gray78 = '\u001b[38;5;251m';
         const String resetColor = '\u001b[0m';
+        int lineCount = 0;
         for (String line in stackLines) {
-          debugPrint(brightWhite + line + resetColor, wrapWidth: wrapWidth);
+          debugPrint(gray78 + line + resetColor, wrapWidth: wrapWidth);
           lineCount++;
           if (lineCount == 10)
             break;

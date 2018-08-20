@@ -3560,9 +3560,13 @@ class ErrorWidget extends LeafRenderObjectWidget {
   /// The message to display.
   final String message;
 
+  static String clearColors(String s) {
+    return s.replaceAll(new RegExp(r'\u001b\[[0-9;]+?m'), '');
+  }
+
   static String _stringify(Object exception) {
     try {
-      return exception.toString();
+      return clearColors(exception.toString());
     } catch (e) { } // ignore: empty_catches
     return 'Error';
   }

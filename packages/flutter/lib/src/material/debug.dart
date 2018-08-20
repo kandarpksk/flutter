@@ -23,6 +23,7 @@ bool debugCheckHasMaterial(BuildContext context) {
   assert(() {
     if (context.widget is! Material && context.ancestorWidgetOfExactType(Material) == null) {
       final StringBuffer message = new StringBuffer();
+
       const String brightRed = '\u001b[31;1m';
       const String resetColor = '\u001b[0m';
       message.writeln(
@@ -46,32 +47,49 @@ bool debugCheckHasMaterial(BuildContext context) {
         'include one, or use a widget that contains Material itself, '
         'such as a Card, Dialog, Drawer, or Scaffold.\n'
       );
-      // This is not redundant if you're just looking at the red box.
-      //
-      // message.writeln(
-      //   'The specific widget that could not find a Material ancestor was:'
-      // );
-      // message.writeln('  ${context.widget}');
+
+      // kkhandwala@: Highlighting the widget.
+      const String brightBlue = '\u001b[34;1m'; // must be the same color as in framework.dart
+      message.writeln(
+        'The specific widget that could not find a Material ancestor was:'
+      );
+      var parenIndex = '${context.widget}'.indexOf('(');
+      message.write(
+        '  ' + brightBlue + '${context.widget}'.split('(')[0] + resetColor
+      );
+      if (parenIndex != -1)
+        message.writeln('${context.widget}'.substring(parenIndex));
+      else
+        message.writeln('');
+
       final List<Widget> ancestors = <Widget>[];
       context.visitAncestorElements((Element element) {
         ancestors.add(element.widget);
         return true;
       });
       if (ancestors.isNotEmpty) {
-        message.write('The ancestors of this widget were:');
+        message.write('\nThe ancestors of this widget were:');
+        // https://jonasjacek.github.io/colors/
+        const String gray78 = '\u001b[38;5;251m';
         int lineCount = 0;
         for (Widget ancestor in ancestors) {
-          message.write('\n  $ancestor');
+          // kkhandwala@: we do not want to emphasize the parameters.
+          var parenthesisIndex = '$ancestor'.indexOf('(');
+          message.write('\n  ' + '$ancestor'.split('(')[0]);
+          if (parenthesisIndex != -1)
+            message.write(
+              gray78 + '$ancestor'.substring(parenthesisIndex) + resetColor
+            );
           lineCount++;
           if (lineCount == 5)
             break;
         }
         // Kandarp: for the terminal, there could be a verbose mode for errors
-        message.write('\n  ...');
+        message.writeln('\n  ...');
         // Kandarp: the stack trace is shown by default and may not be relevant here
       } else {
         message.writeln(
-          'This widget is the root of the tree, so it has no '
+          '\nThis widget is the root of the tree, so it has no '
           'ancestors, let alone a "Material" ancestor.'
         );
       }
