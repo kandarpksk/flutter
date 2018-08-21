@@ -25,23 +25,24 @@ bool debugCheckHasMaterial(BuildContext context) {
       final StringBuffer message = new StringBuffer();
 
       const String brightRed = '\u001b[31m';
-      const String resetColor = '\u001b[0m';
+      const String boldBlack = '\u001b[30;1m';
+      const String resetFormatting = '\u001b[0m';
       message.writeln(
         brightRed + '${context.widget.runtimeType} widgets require '
-        'a Material widget ancestor, but we couldn\'t find any.' + resetColor + '\n'
+        'a Material widget ancestor, but we couldn\'t find any.' + resetFormatting + '\n'
       ); // Kandarp: "who" is speaking to the user?
       message.writeln(
-        'Explanation'
+        '${boldBlack}Explanation${resetFormatting}'
         '\nIn material design, most widgets are conceptually "printed" on '
         'a sheet of material. In Flutter\'s material library, that '
         'material is represented by the Material widget. It is the '
         'Material widget that renders ink splashes, for instance. '
         'Because of this, many material library widgets require that '
-        'there be a Material widget in the tree above them.'
+        'there be a Material widget in the tree above them.\n'
         // Kandarp: Filip's suggestions of adding links could apply here.
       );
       message.writeln(
-        '\nSuggested Fix'
+        '${boldBlack}Suggested Fix${resetFormatting}'
         // Kandarp: we could provide an "error signature" that could be
         // looked up if users want more information
         '\nTo introduce a Material widget, you can either directly '
@@ -56,7 +57,7 @@ bool debugCheckHasMaterial(BuildContext context) {
       // kkhandwala@: Highlighting the widget.
       var parenIndex = '${context.widget}'.indexOf('(');
       message.write(
-        '  ' + brightBlue + '${context.widget}'.split('(')[0] + resetColor
+        '  ' + brightBlue + '${context.widget}'.split('(')[0] + resetFormatting
       );
       if (parenIndex != -1)
         message.writeln('${context.widget}'.substring(parenIndex));
@@ -79,7 +80,7 @@ bool debugCheckHasMaterial(BuildContext context) {
           message.write('\n  ' + '$ancestor'.split('(')[0]);
           if (parenthesisIndex != -1)
             message.write(
-              gray78 + '$ancestor'.substring(parenthesisIndex) + resetColor
+              gray78 + '$ancestor'.substring(parenthesisIndex) + resetFormatting
             );
           lineCount++;
           if (lineCount == 5)
