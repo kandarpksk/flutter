@@ -3646,7 +3646,7 @@ abstract class ComponentElement extends Element {
       built = build();
       debugWidgetBuilderValue(widget, built);
     } catch (e, stack) {
-      const String brightBlue = '\u001b[34;1m'; // see what is used in the default IDE color scheme
+      const String brightBlue = '\u001b[34m'; // see what is used in the default IDE color scheme
       const String resetColor = '\u001b[0m';
       built = ErrorWidget.builder(_debugReportException(
         'building ' + brightBlue + '$this' + resetColor, e, stack));

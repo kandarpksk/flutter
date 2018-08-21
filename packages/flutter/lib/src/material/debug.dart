@@ -24,7 +24,7 @@ bool debugCheckHasMaterial(BuildContext context) {
     if (context.widget is! Material && context.ancestorWidgetOfExactType(Material) == null) {
       final StringBuffer message = new StringBuffer();
 
-      const String brightRed = '\u001b[31;1m';
+      const String brightRed = '\u001b[31m';
       const String resetColor = '\u001b[0m';
       message.writeln(
         brightRed + '${context.widget.runtimeType} widgets require '
@@ -49,7 +49,7 @@ bool debugCheckHasMaterial(BuildContext context) {
         'such as a Card, Dialog, Drawer, or Scaffold.\n'
       );
 
-      const String brightBlue = '\u001b[34;1m'; // must be the same color as in framework.dart
+      const String brightBlue = '\u001b[34m'; // must be the same color as in framework.dart
       message.writeln(
         'The specific widget that could not find a Material ancestor was:'
       );

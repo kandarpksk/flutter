@@ -241,7 +241,7 @@ class FlutterError extends AssertionError {
   // kkhandwala@: Hiding the parameters.
   // TODO: verbose mode to see the parameters.
   static String shorten(String context) {
-    const String brightBlue = '\u001b[34;1m'; // must be the same color as in framework.dart
+    const String brightBlue = '\u001b[34m'; // must be the same color as in framework.dart
     const String resetColor = '\u001b[0m';
     if (context.startsWith('building ' + brightBlue + 'TextField('))
       return context.split('(')[0] + '(...)' + resetColor;
@@ -300,7 +300,7 @@ class FlutterError extends AssertionError {
           message = message.substring(prefix.length);
 
         // kkhandwala@: [message] is printed differently since we want only specific wrapped lines indented.
-        debugPrint('\nThe following $errorName was $verb:\n', wrapWidth: wrapWidth);
+        debugPrint('\nThe following $errorName was $verb:', wrapWidth: wrapWidth);
         String wrapIndent = '';
         for (String line in message.split('\n')) {
           if (line.startsWith('The ancestors of this widget were:'))
