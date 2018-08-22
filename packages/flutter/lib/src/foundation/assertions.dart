@@ -239,11 +239,10 @@ class FlutterError extends AssertionError {
   static const int wrapWidth = 100;
 
   // kkhandwala@: Hiding the parameters.
-  // TODO: verbose mode to see the parameters.
   static String shorten(String context) {
-    const String brightBlue = '\u001b[34m'; // must be the same color as in framework.dart
+    const String boldBlue = '\u001b[34;1m'; // must be the same color as in framework.dart
     const String resetColor = '\u001b[0m';
-    if (context.startsWith('building ' + brightBlue + 'TextField('))
+    if (context.startsWith('building ' + boldBlue + 'TextField('))
       return context.split('(')[0] + '(...)' + resetColor;
     return context;
   }
@@ -345,13 +344,15 @@ class FlutterError extends AssertionError {
         }
 
         // kkhandwala@: Showing only a few lines of the stack trace.
-        // TODO: verbose mode to see the entire stack trace.
         const String gray78 = '\u001b[38;5;251m';
         const String resetColor = '\u001b[0m';
         int lineCount = 0;
         for (String line in stackLines) {
           debugPrint(gray78 + line + resetColor, wrapWidth: wrapWidth);
           lineCount++;
+          // kkhandwala@: (TODO) Ideally, this would be dynamic,
+          // determined by which lines closely relate to the developer's code.
+          // Also, *only* file paths should be grayed out.
           if (lineCount == 10)
             break;
         }
