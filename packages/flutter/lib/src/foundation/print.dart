@@ -86,7 +86,8 @@ void _debugPrintTask() {
 /// [debugPrint], which is used to report errors to the console).
 Future<Null> get debugPrintDone => _debugPrintCompleter?.future ?? new Future<Null>.value();
 
-// The regular expression may need to be generalized further.
+// The regular expression may need to be generalized further. This is useful to refer to:
+// https://github.com/Microsoft/vscode/blob/master/src/vs/base/common/strings.ts#L607
 final RegExp colorCodes = new RegExp(r'\u001b\[[0-9;]+?m');
 String clearColors(String s) {
   return s.replaceAll(colorCodes, '');

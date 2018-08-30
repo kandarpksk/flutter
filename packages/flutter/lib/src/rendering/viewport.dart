@@ -984,7 +984,7 @@ class RenderViewport extends RenderViewportBase<SliverPhysicalContainerParentDat
             if (!constraints.hasBoundedHeight) {
               throw new FlutterError(
                 'Vertical viewport was given unbounded height.\n'
-                'Viewports expand in the scrolling direction to fill their container.'
+                'Viewports expand in the scrolling direction to fill their container. '
                 'In this case, a vertical viewport was given an unlimited amount of '
                 'vertical space in which to expand. This situation typically happens '
                 'when a scrollable widget is nested inside another scrollable widget.\n'
@@ -1010,7 +1010,7 @@ class RenderViewport extends RenderViewportBase<SliverPhysicalContainerParentDat
             if (!constraints.hasBoundedWidth) {
               throw new FlutterError(
                 'Horizontal viewport was given unbounded width.\n'
-                'Viewports expand in the scrolling direction to fill their container.'
+                'Viewports expand in the scrolling direction to fill their container. '
                 'In this case, a horizontal viewport was given an unlimited amount of '
                 'horizontal space in which to expand. This situation typically happens '
                 'when a scrollable widget is nested inside another scrollable widget.\n'
