@@ -3646,6 +3646,9 @@ abstract class ComponentElement extends Element {
       built = build();
       debugWidgetBuilderValue(widget, built);
     } catch (e, stack) {
+      // kkhandwala@: This is the color referenced in assertions.dart
+      // (as a hack to keep the matching code simple) and debug.dart
+      // (for consistency as in the mockup).
       const String boldBlue = '\u001b[34;1m';
       const String resetColor = '\u001b[0m';
       built = ErrorWidget.builder(_debugReportException(
