@@ -29,19 +29,19 @@ bool debugCheckHasMaterial(BuildContext context) {
       final String resetFormatting = '\u001b[0m';
       message.writeln(
         brightRed + '${context.widget.runtimeType} widgets require '
-        'a Material widget ancestor, but we couldn\'t find any.' + resetFormatting + '\n'
-      ); // Kandarp: "who" is speaking to the user?
+        'a Material widget ancestor, but we couldn\'t find any.'
+        + resetFormatting + '\n'
+      );
       message.writeln(
         '${bold}Explanation${resetFormatting}'
         // kkhandwala@: Tabs (\t) are not accounted for properly when wrapping
-        // but using spaces causes the entire paragraph to be indented.
+        // while using spaces causes the entire paragraph to be indented.
         '\n    In material design, most widgets are conceptually "printed" on '
         'a sheet of material. In Flutter\'s material library, that '
         'material is represented by the Material widget. It is the '
         'Material widget that renders ink splashes, for instance. '
         'Because of this, many material library widgets require that '
         'there be a Material widget in the tree above them.\n'
-        // Kandarp: Filip's suggestions of adding links could apply here.
       );
       message.writeln(
         '${bold}Potential Fix${resetFormatting}'
@@ -50,14 +50,15 @@ bool debugCheckHasMaterial(BuildContext context) {
         'such as a Card, Dialog, Drawer, or Scaffold.\n'
       );
 
-      final String boldBlue = '\u001b[34;1m'; // must be the same color as in framework.dart
+      // kkhandwala@: should be the same shade as in framework.dart
+      final String boldBlue = '\u001b[34;1m';
       final String gray78 = '\u001b[38;5;251m';
       message.writeln(
         'The specific widget that could not find a Material ancestor was:'
       );
       final String path = '///Users/kkhandwala/development/';
       var location = getCreationLocation(context.widget).toString().replaceAll(path, '');
-      // Kandarp: using the default green for now
+      // kkhandwala@: Using the default shade of green for now.
       final String green = '\u001b[32m';
       message.writeln(green + location + resetFormatting);
       // kkhandwala@: Highlighting the widget.
@@ -76,9 +77,8 @@ bool debugCheckHasMaterial(BuildContext context) {
         return true;
       });
       if (ancestors.isNotEmpty) {
-        // kkhandwala@: This would ideally be at par with the Android Studio
-        // widget inspector. TODO: Highlight user-instantiated widgets
-        // (while graying out platform/internal system widgets)
+        // kkhandwala@: This would ideally be at par with
+        // the widget inspector in Android Studio.
         message.write('\nThe ancestors of this widget were:');
         // https://jonasjacek.github.io/colors/
         final String gray78 = '\u001b[38;5;251m';
@@ -88,16 +88,17 @@ bool debugCheckHasMaterial(BuildContext context) {
           // to be used in this manner, so that's something to check.
           location = getCreationLocation(ancestor).toString().replaceAll(path, '');
           final bool isPackageFlutter = location.contains('packages/flutter/');
-          // Kandarp: what is a more reasonable minimum?
+          // kkhandwala@: If the ancestors are not user-instantiated widgets,
+          // we would ideally show at least some of them.
           if (isPackageFlutter && lineCount > 0) {
             message.writeln('\n  ...');
             break;
           }
 
-          // kkhandwala@: Showing the parameters in gray.
+          // kkhandwala@: Showing the parameters in gray...
           var parenthesisIndex = '$ancestor'.indexOf('(');
           message.write('\n  ' + '$ancestor'.split('(')[0]);
-          if (parenthesisIndex != -1) // if there isn't a parenthesis
+          if (parenthesisIndex != -1) // ...if there is a parenthesis.
             message.write(
               gray78 + '$ancestor'.substring(parenthesisIndex) + resetFormatting
             );

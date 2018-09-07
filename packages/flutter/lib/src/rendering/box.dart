@@ -1433,7 +1433,7 @@ abstract class RenderBox extends RenderObject {
   /// Whether this render object has undergone layout and has a [size].
   bool get hasSize => _size != null;
 
-  // needs flutter run --track-widget-creation
+  // needs --track-widget-creation with flutter run
   String toStringWithLocation() {
     final String message = toString();
     var location = getCreationLocation(debugCreator.element);
@@ -1444,7 +1444,7 @@ abstract class RenderBox extends RenderObject {
     final String file = location.file.replaceAll(path, '');
     final bool isPackageFlutter = file.contains('packages/flutter/');
     if (!isPackageFlutter) {
-      // Widget is from a user's package.
+      // jacobr@: Widget is from a user's package.
       const String resetColor = '\u001b[0m';
       return '$message$resetColor ${file}:${location.line}';
     } else {

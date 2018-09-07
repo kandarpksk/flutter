@@ -238,11 +238,13 @@ class FlutterError extends AssertionError {
   /// they will wrap, e.g. when placing ASCII art diagrams in messages.
   static const int wrapWidth = 100;
 
-  // kkhandwala@: Hiding the parameters.
+  // kkhandwala@ucsd.edu: Hiding parameters, showing an ellipsis instead.
   static String shorten(String context) {
-    const String boldBlue = '\u001b[34;1m'; // must be the same color as in framework.dart
+    const String boldBlue = '\u001b[34;1m';
     const String gray78 = '\u001b[38;5;251m';
     const String resetColor = '\u001b[0m';
+    // kkhandwala@: must be the same color as in framework.dart
+    // Ideally, we would ignore color codes when pattern matching.
     if (context.startsWith('building ' + boldBlue + 'TextField('))
       return context.split('(')[0] + resetColor + '$gray78(...)$resetColor';
     return context;
@@ -273,7 +275,6 @@ class FlutterError extends AssertionError {
       return;
     if (_errorCount == 0 || forceReport) {
       final String header = '\u2550\u2550\u2561 EXCEPTION CAUGHT BY ${details.library} \u255E'.toUpperCase();
-      // kkhandwala@: avoiding messing with spacing between (as opposed to within) errors
       final String footer = '\u2550' * wrapWidth;
       debugPrint('$header${"\u2550" * (footer.length - header.length)}');
       final String verb = 'thrown${ details.context != null ? " ${shorten(details.context)}" : ""}';
@@ -300,12 +301,14 @@ class FlutterError extends AssertionError {
         if (message.startsWith(prefix))
           message = message.substring(prefix.length);
 
-        // kkhandwala@: [message] is printed differently since we want only specific wrapped lines indented.
+        // kkhandwala@: [message] is printed differently since we
+        // do not want wrapped lines in a paragraph to get indented.
         debugPrint('\n    The following $errorName was $verb:', wrapWidth: wrapWidth);
         String wrapIndent = '';
         for (String line in message.split('\n')) {
+          // kkhandwala@: Ideally, the indentation preference would be encoded
+          // in the message or determined by an explicit structure for [message].
           if (line.startsWith('The specific widget that could not find a Material ancestor was:'))
-            // kkhandwala@: From this point, if a "line" in [message] is wrapped, it is indented a level deeper.
             wrapIndent = '  ';
           debugPrint(line, wrapWidth: wrapWidth, wrapIndent: wrapIndent);
         }
@@ -345,7 +348,7 @@ class FlutterError extends AssertionError {
           stackLines = defaultStackFilter(stackLines);
         }
 
-        // kkhandwala@: Showing only a few lines of the stack trace.
+        // kkhandwala@: Showing only 11 lines of the stack trace.
         const String gray78 = '\u001b[38;5;251m';
         const String resetColor = '\u001b[0m';
         int lineCount = 0;
@@ -367,6 +370,7 @@ class FlutterError extends AssertionError {
       }
       debugPrint(footer);
     } else {
+      // kkhandwala@: Errors after the first one are shown in gray.
       const String gray78 = '\u001b[38;5;251m';
       const String resetColor = '\u001b[0m';
       debugPrint(gray78 + 'Another exception was thrown: ${details.exceptionAsString().split("\n")[0].trimLeft()}' + resetColor);

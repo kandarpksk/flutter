@@ -7,7 +7,8 @@ import 'dart:collection';
 
 /// Signature for [debugPrint] implementations.
 typedef void DebugPrintCallback(String message, { int wrapWidth, String wrapIndent });
-// kkhandwala@: Added wrapIndent parameter might cause issues.
+// kkhandwala@: Adding the wrapIndent parameter might
+// have "side effects" that I didn't run into.
 
 /// Prints a message to the console, which you can access using the "flutter"
 /// tool's "logs" command ("flutter logs").
@@ -92,6 +93,7 @@ final RegExp colorCodes = new RegExp(r'\u001b\[[0-9;]+?m');
 String clearColors(String s) {
   return s.replaceAll(colorCodes, '');
 }
+
 final RegExp _indentPattern = new RegExp('^ *(?:[-+*] |[0-9]+[.):] )?');
 enum _WordWrapParseMode { inSpace, inWord, atBreak }
 /// Wraps the given string at the given width.
@@ -140,13 +142,13 @@ Iterable<String> debugWordWrap(String message, int width, { String wrapIndent: '
         break;
 
       case _WordWrapParseMode.atBreak: // at start of break point
-        // kkhandwala@: adjustment to ignore color codes, which are invisible.
-        // This is not a comprehensive/tested fix. For example, it could wrap just
-        // before a color code starts (which we'd prefer to have been included).
+        // kkhandwala@: Adjustment to ignore color codes (as they do not occupy space).
+        // This is not a comprehensive fix. For example, a line could be wrapped just
+        // before a color code (which we'd ideally prefer to have been included).
         var adjustment = 0;
         var matches = colorCodes.allMatches(message.substring(start, index));
         matches.forEach((Match m){
-          adjustment += m.group(0).length; // toggle this line to revert for comparison
+          adjustment += m.group(0).length; // toggle this line to quickly revert for comparison
         });
         if ((index - startForLengthCalculations - adjustment > width) || (index == message.length)) {
           // we are over the width line, so break
