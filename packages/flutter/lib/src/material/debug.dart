@@ -24,16 +24,18 @@ bool debugCheckHasMaterial(BuildContext context) {
     if (context.widget is! Material && context.ancestorWidgetOfExactType(Material) == null) {
       final StringBuffer message = new StringBuffer();
 
-      const String brightRed = '\u001b[1;31m';
-      const String bold = '\u001b[1m';
-      const String resetFormatting = '\u001b[0m';
+      final String brightRed = '\u001b[1;31m';
+      final String bold = '\u001b[1m';
+      final String resetFormatting = '\u001b[0m';
       message.writeln(
         brightRed + '${context.widget.runtimeType} widgets require '
         'a Material widget ancestor, but we couldn\'t find any.' + resetFormatting + '\n'
       ); // Kandarp: "who" is speaking to the user?
       message.writeln(
         '${bold}Explanation${resetFormatting}'
-        '\nIn material design, most widgets are conceptually "printed" on '
+        // kkhandwala@: Tabs (\t) are not accounted for properly when wrapping
+        // but using spaces causes the entire paragraph to be indented.
+        '\n    In material design, most widgets are conceptually "printed" on '
         'a sheet of material. In Flutter\'s material library, that '
         'material is represented by the Material widget. It is the '
         'Material widget that renders ink splashes, for instance. '
@@ -42,23 +44,29 @@ bool debugCheckHasMaterial(BuildContext context) {
         // Kandarp: Filip's suggestions of adding links could apply here.
       );
       message.writeln(
-        '${bold}Suggested Fix${resetFormatting}'
-        '\nTo introduce a Material widget, you can either directly '
+        '${bold}Potential Fix${resetFormatting}'
+        '\n    To introduce a Material widget, you can either directly '
         'include one, or use a widget that contains Material itself, '
         'such as a Card, Dialog, Drawer, or Scaffold.\n'
       );
 
-      const String boldBlue = '\u001b[34;1m'; // must be the same color as in framework.dart
+      final String boldBlue = '\u001b[34;1m'; // must be the same color as in framework.dart
+      final String gray78 = '\u001b[38;5;251m';
       message.writeln(
         'The specific widget that could not find a Material ancestor was:'
       );
+      final String path = '///Users/kkhandwala/development/';
+      var location = getCreationLocation(context.widget).toString().replaceAll(path, '');
+      // Kandarp: using the default green for now
+      final String green = '\u001b[32m';
+      message.writeln(green + location + resetFormatting);
       // kkhandwala@: Highlighting the widget.
       var parenIndex = '${context.widget}'.indexOf('(');
       message.write(
         '  ' + boldBlue + '${context.widget}'.split('(')[0] + resetFormatting
       );
       if (parenIndex != -1)
-        message.writeln('${context.widget}'.substring(parenIndex));
+        message.writeln(gray78 + '${context.widget}'.substring(parenIndex) + resetFormatting);
       else
         message.writeln('');
 
@@ -73,21 +81,32 @@ bool debugCheckHasMaterial(BuildContext context) {
         // (while graying out platform/internal system widgets)
         message.write('\nThe ancestors of this widget were:');
         // https://jonasjacek.github.io/colors/
-        const String gray78 = '\u001b[38;5;251m';
+        final String gray78 = '\u001b[38;5;251m';
         int lineCount = 0;
         for (Widget ancestor in ancestors) {
+          // kkhandwala@: I don't know if getCreationLocation is intended
+          // to be used in this manner, so that's something to check.
+          location = getCreationLocation(ancestor).toString().replaceAll(path, '');
+          final bool isPackageFlutter = location.contains('packages/flutter/');
+          // Kandarp: what is a more reasonable minimum?
+          if (isPackageFlutter && lineCount > 0) {
+            message.writeln('\n  ...');
+            break;
+          }
+
           // kkhandwala@: Showing the parameters in gray.
           var parenthesisIndex = '$ancestor'.indexOf('(');
           message.write('\n  ' + '$ancestor'.split('(')[0]);
-          if (parenthesisIndex != -1)
+          if (parenthesisIndex != -1) // if there isn't a parenthesis
             message.write(
               gray78 + '$ancestor'.substring(parenthesisIndex) + resetFormatting
             );
+
+          if (!isPackageFlutter)
+            message.write('\n    ' + green + location + resetFormatting);
+
           lineCount++;
-          if (lineCount == 5)
-            break;
         }
-        message.writeln('\n  ...');
       } else {
         message.writeln(
           '\nThis widget is the root of the tree, so it has no '

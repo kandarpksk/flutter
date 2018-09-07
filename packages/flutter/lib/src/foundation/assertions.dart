@@ -241,9 +241,10 @@ class FlutterError extends AssertionError {
   // kkhandwala@: Hiding the parameters.
   static String shorten(String context) {
     const String boldBlue = '\u001b[34;1m'; // must be the same color as in framework.dart
+    const String gray78 = '\u001b[38;5;251m';
     const String resetColor = '\u001b[0m';
     if (context.startsWith('building ' + boldBlue + 'TextField('))
-      return context.split('(')[0] + '(...)' + resetColor;
+      return context.split('(')[0] + resetColor + '$gray78(...)$resetColor';
     return context;
   }
 
@@ -272,7 +273,8 @@ class FlutterError extends AssertionError {
       return;
     if (_errorCount == 0 || forceReport) {
       final String header = '\u2550\u2550\u2561 EXCEPTION CAUGHT BY ${details.library} \u255E'.toUpperCase();
-      final String footer = '\u2550' * wrapWidth + '\n';
+      // kkhandwala@: avoiding messing with spacing between (as opposed to within) errors
+      final String footer = '\u2550' * wrapWidth;
       debugPrint('$header${"\u2550" * (footer.length - header.length)}');
       final String verb = 'thrown${ details.context != null ? " ${shorten(details.context)}" : ""}';
       if (details.exception is NullThrownError) {
@@ -299,11 +301,11 @@ class FlutterError extends AssertionError {
           message = message.substring(prefix.length);
 
         // kkhandwala@: [message] is printed differently since we want only specific wrapped lines indented.
-        debugPrint('\nThe following $errorName was $verb:', wrapWidth: wrapWidth);
+        debugPrint('\n    The following $errorName was $verb:', wrapWidth: wrapWidth);
         String wrapIndent = '';
         for (String line in message.split('\n')) {
-          if (line.startsWith('The ancestors of this widget were:'))
-            // kkhandwala@: From this point, if a "line" in [message] is wrapped, it is indented.
+          if (line.startsWith('The specific widget that could not find a Material ancestor was:'))
+            // kkhandwala@: From this point, if a "line" in [message] is wrapped, it is indented a level deeper.
             wrapIndent = '  ';
           debugPrint(line, wrapWidth: wrapWidth, wrapIndent: wrapIndent);
         }
@@ -350,9 +352,9 @@ class FlutterError extends AssertionError {
         for (String line in stackLines) {
           debugPrint(gray78 + line + resetColor, wrapWidth: wrapWidth);
           lineCount++;
-          // kkhandwala@: (TODO) Ideally, this would be dynamic,
-          // determined by which lines closely relate to the developer's code.
-          // Also, *only* file paths should be grayed out.
+          // kkhandwala@: Ideally, this would be dynamic, determined
+          // by which lines closely relate to the developer's code.
+          // Also, only file paths should be grayed out (see mockup).
           if (lineCount == 10)
             break;
         }
@@ -365,9 +367,9 @@ class FlutterError extends AssertionError {
       }
       debugPrint(footer);
     } else {
-      const String reversed = '\u001b[7m';
+      const String gray78 = '\u001b[38;5;251m';
       const String resetColor = '\u001b[0m';
-      debugPrint(reversed + 'Another exception was thrown: ${details.exceptionAsString().split("\n")[0].trimLeft()}' + resetColor);
+      debugPrint(gray78 + 'Another exception was thrown: ${details.exceptionAsString().split("\n")[0].trimLeft()}' + resetColor);
     }
     _errorCount += 1;
   }
