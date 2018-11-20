@@ -23,10 +23,9 @@ bool debugCheckHasMaterial(BuildContext context) {
   assert(() {
     if (context.widget is! Material && context.ancestorWidgetOfExactType(Material) == null) {
       final StringBuffer message = new StringBuffer();
-      message.writeln('No Material widget found.');
       message.writeln(
         '${context.widget.runtimeType} widgets require a Material '
-        'widget ancestor.'
+        'widget ancestor, but we couldn\'t find any.'
       );
       message.writeln(
         'In material design, most widgets are conceptually "printed" on '
